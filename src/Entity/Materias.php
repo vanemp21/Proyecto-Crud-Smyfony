@@ -17,7 +17,7 @@ class Materias
     #[ORM\Column(length: 255)]
     private ?string $nombre = null;
 
-    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
+    #[ORM\Column(type: Types::SMALLINT)]
     private ?int $capacidad = null;
 
     #[ORM\ManyToOne(inversedBy: 'materias')]
