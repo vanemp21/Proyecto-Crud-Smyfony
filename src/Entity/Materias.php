@@ -17,11 +17,11 @@ class Materias
     #[ORM\Column(length: 255)]
     private ?string $nombre = null;
 
-    #[ORM\Column(type: Types::SMALLINT)]
+    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
     private ?int $capacidad = null;
 
     #[ORM\ManyToOne(inversedBy: 'materias')]
-    private ?Usuarios $usuarios = null;
+    private ?Usuario $usuario = null;
 
     public function getId(): ?int
     {
@@ -45,21 +45,21 @@ class Materias
         return $this->capacidad;
     }
 
-    public function setCapacidad(int $capacidad): static
+    public function setCapacidad(?int $capacidad): static
     {
         $this->capacidad = $capacidad;
 
         return $this;
     }
 
-    public function getUsuarios(): ?Usuarios
+    public function getUsuario(): ?Usuario
     {
-        return $this->usuarios;
+        return $this->usuario;
     }
 
-    public function setUsuarios(?Usuarios $usuarios): static
+    public function setUsuario(?Usuario $usuario): static
     {
-        $this->usuarios = $usuarios;
+        $this->usuario = $usuario;
 
         return $this;
     }
