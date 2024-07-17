@@ -45,7 +45,7 @@ class Materias
         return $this->capacidad;
     }
 
-    public function setCapacidad(?int $capacidad): static
+    public function setCapacidad(int $capacidad): static
     {
         $this->capacidad = $capacidad;
 

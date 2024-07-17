@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Usuario;
 use App\Form\UsuarioType;
 use App\Repository\UsuarioRepository;
+use App\Entity\Materias;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,7 +18,7 @@ class UsuarioController extends AbstractController
 {
     //Las rutas van encima de la funcion que van a ejecutar
     #[Route('/', name: 'app_usuario_index', methods: ['GET'])]
-    public function index(UsuarioRepository $usuarioRepository): Response
+    public function index(UsuarioRepository $usuarioRepository, EntityManagerInterface $entityManager): Response
     // ⁡⁢⁣⁣public function index(EntityManagerInterface $entityManager): Response⁡
     {
         // ⁡⁢⁣⁣$usuarios=$entityManager->getRepository(Usuario::class)->findByName('curso')⁡
@@ -25,6 +26,10 @@ class UsuarioController extends AbstractController
         // $usuarios = $usuarioRepository->findByNameQuery('pepito');
         $usuarios = $usuarioRepository->findAll();
         //$usuarios = $usuarioRepository->findBy(array('edad'=>'18'),(array('nombre'=>'ASC'))
+        $materias = $entityManager->getRepository(Materias::class)->findAll();
+        // dump($materias);
+        // die();
+
         return $this->render('usuario/index.html.twig', [
             'usuarios' => $usuarios,
         ]);
@@ -38,10 +43,16 @@ class UsuarioController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($usuario);
-            $entityManager->flush();
+            $form_request=$request->request->all();
+            $csrf_token=$form_request['usuario']['_token'];
+            if ($this->isCsrfTokenValid('usuario_create' . $usuario->getId(), $csrf_token)) {
+                $entityManager->persist($usuario);
+                $entityManager->flush();
 
-            return $this->redirectToRoute('app_usuario_index', [], Response::HTTP_SEE_OTHER);
+                return $this->redirectToRoute('app_usuario_index', [], Response::HTTP_SEE_OTHER);
+            } else {
+                echo 'El token enviado no es válido, eres un bot.';
+            }
         }
 
         return $this->render('usuario/new.html.twig', [
@@ -79,7 +90,7 @@ class UsuarioController extends AbstractController
     #[Route('/{id}', name: 'app_usuario_delete', methods: ['POST'])]
     public function delete(Request $request, Usuario $usuario, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$usuario->getId(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $usuario->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($usuario);
             $entityManager->flush();
         }

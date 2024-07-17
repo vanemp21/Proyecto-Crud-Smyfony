@@ -38,6 +38,8 @@ class Usuario
         $this->materias = new ArrayCollection();
     }
 
+    
+
     public function getId(): ?int
     {
         return $this->id;
@@ -120,4 +122,6 @@ class Usuario
 
         return $this;
     }
+
+
 }
